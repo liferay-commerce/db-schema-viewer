@@ -1,4 +1,8 @@
-This project was created to build an interactive graph displaying Liferay's modules schema.
+This project was created to build an interactive graph displaying Liferay's database relationships on  schema modules.
+
+### Requirements
+* Node >= 10.x
+* Yarn >= 0.10.x
 
 **We use the following technologies:**
 ### For the cli side:
