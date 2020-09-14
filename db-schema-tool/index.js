@@ -15,7 +15,6 @@
 
 import fdir from "fdir"
 import fs from "fs"
-import rimraf from "rimraf"
 import xml2js from "xml2js"
 // the builder
 const parser = new xml2js.Parser()
@@ -25,7 +24,7 @@ const dirServer = process.env.PWD
 let fol = ""
 
 try {
-    let obj = JSON.parse(fs.readFileSync('./project-path.json'))
+    let obj = JSON.parse(fs.readFileSync(`project-path.json`))
     fol = obj[0].choices
 } catch (err) { console.log(err) }
 
@@ -36,9 +35,8 @@ const files = new fdir()
     .sync()
 
 // filter service.xml from all files array paths list - excluding META-INF/service.xml files
-const PATTERN = /service\.xml$/
 const SERVICES_PATHS_LIST = files
-    .filter(str => PATTERN.test(str))
+    .filter(str => /service\.xml$/.test(str))
     .filter(nometa => nometa.indexOf("META") === -1)
 
 const createPathList = async () => {
@@ -50,14 +48,23 @@ const createPathList = async () => {
             path: tempname.input
         })
     })
+    console.log('createPathList FINISH')
 }
 
 const clearStuff = async () => {
     try {
-        rimraf(`${dirServer}/db-schema-tool/models`, () => {
-            fs.mkdirSync(`${dirServer}/db-schema-tool/models`)
+        fs.rmdir(`${dirServer}/models/`, {
+            recursive: true
+        }, (err) => {
+            if (err) {
+                console.log("models folder exists yet")
+            }
+            console.log(`models folder is deleted!`)
+            fs.mkdirSync(`${dirServer}/models/`)
         })
     } catch (err) {console.error(err)}
+    console.log('clearStuff FINISH')
+
 }
 
 const makeJson = async () => {
@@ -71,22 +78,23 @@ const makeJson = async () => {
                     if (err) throw err
                     jsonResult = JSON.stringify(result)
                     newFilePath = `${dirServer}/models/${el.filename}.json`
+                    console.log("newFilePath", newFilePath)
                     fs.writeFileSync(newFilePath, jsonResult, (err) => {
                         err ? console.log(err) : console.log("Output saved to " + newFilePath)
                     })
+                    console.log("Output saved to " + newFilePath)
                 })
             })
         })
+        console.log("JSONs generated")
     } catch (err) {
         console.error(err)
     }
 }
 
 const main = async () => {
-        // var dirServerFiles = fs.readdirSync(dirServer);
-        await createPathList()
-        await clearStuff()
-        await makeJson()
+    await createPathList()
+    await clearStuff()
+    await makeJson()
 }
-
 main()

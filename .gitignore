@@ -606,3 +606,5 @@ my-schema-nodes.json
 *.code-snippets
 build/
 build/*
+allIds.
+json

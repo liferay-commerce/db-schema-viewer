@@ -61,3 +61,11 @@ The build is minified and the filenames include the hashes.<br>
 Your app is ready to be deployed!
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+
+
+
+To make it works run it twice 😞
+
+*Edit:*
+The json's generation now should be fixed.<br>
+If the diagram doesn't appear, try to run it twice anyway. If it doesn't works report to me and i'll fix the issue.

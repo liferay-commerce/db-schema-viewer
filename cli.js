@@ -1,10 +1,11 @@
-import inquirer from 'inquirer';
-import chalk from 'chalk';
-import figlet from 'figlet';
-import fs from 'fs';
+import inquirer from 'inquirer'
+import chalk from 'chalk'
+import figlet from 'figlet'
+import fs from 'fs'
+const dirServer = process.env.PWD
 import {
-    exec
-} from 'child_process';
+    exec, execSync
+} from 'child_process'
 
 const diagramPath = []
 
@@ -16,7 +17,7 @@ console.log(
             width: 80
         })
     )
-);
+)
 console.log(
     chalk.blue(
         figlet.textSync("Liferay", {
@@ -24,7 +25,7 @@ console.log(
             font: "Larry 3D 2"
         })
     )
-);
+)
 
 const questionaire = async () => {
     let folder = ''
@@ -33,10 +34,9 @@ const questionaire = async () => {
         name: 'liferay_folder_path',
         message: "Insert Liferay Portal's folder absolute path",
     }).then( answers => {   
-        console.log(answers)
         folder = answers.liferay_folder_path.match(/\/$/g) === null ? answers.liferay_folder_path : answers.liferay_folder_path.slice(0, -1)
-    });
-    const sec = await inquirer.prompt({
+    })
+    await inquirer.prompt({
         type: 'expand',
         name: 'choices',
         message: 'Which path you want to start from to generate your diagram?',
@@ -64,30 +64,31 @@ const questionaire = async () => {
 
 const main = async () => {
     await questionaire().then(answ => {
-        fs.writeFile("./project-path.json", JSON.stringify(diagramPath), (err) => {
+        fs.writeFile("project-path.json", JSON.stringify(diagramPath), (err) => {
             err ? console.log(err) : console.log("Output saved to /project-path.json")
         })
-
+    }).then(() => {
+        exec(`node db-schema-tool/index.js`, (error, stdout, stderr) => {
+            if (stdout) {
+                console.log(`stdout: ${stdout}`)
+            } else if (stderr) {
+                console.log(`stderr: ${stderr}`)
+            }
+            if (error !== null) {
+                console.log(`exec error: ${error}`)
+            }
+        })
+    }).then(() => {
+        exec('node db-schema-tool/model.js', (error, stdout, stderr) => {
+            if (stdout) {
+                console.log(`stdout: ${stdout}`)
+            } else if (stderr) {
+                console.log(`stderr: ${stderr}`)
+            }
+            if (error !== null) {
+                console.log(`exec error: ${error}`)
+            }
+        })
     })
-    await exec('node db-schema-tool/index.js', (error, stdout, stderr) => {
-        if (stdout) {
-            console.log(`stdout: ${stdout}`)
-        } else if (stderr) {
-            console.log(`stderr: ${stderr}`);
-        }
-        if (error !== null) {
-            console.log(`callIndex exec error: ${error}`);
-        }
-    });
-    await exec('node db-schema-tool/model.js', (error, stdout, stderr) => {
-        if (stdout) {
-            console.log(`stdout: ${stdout}`)
-        } else if (stderr) {
-            console.log(`stderr: ${stderr}`);
-        }
-        if (error !== null) {
-            console.log(`createModel exec error: ${error}`);
-        }
-    });
 }
-main();
+main()

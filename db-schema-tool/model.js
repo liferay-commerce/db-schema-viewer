@@ -52,10 +52,6 @@ fileObjs.forEach((file) => {
     })
 })
 
-fs.writeFileSync("./allIds.json", JSON.stringify(allIds), (err) => {
-    err ? console.log(err) : console.log("Output saved to /allIds.json")
-})
-
 const finalArray = allIds.map( obj => obj.key)
 const result = Object.values(foreignTables.reduce((c, v) => {
     c[v] = c[v] || [v, 0]
@@ -133,9 +129,9 @@ fs.writeFileSync(`${dirServer}/diagram-db-react/src/data/db-schema.json`, JSON.s
     err ? console.log(err) : console.log("Output saved to /db-schema.json")
 })
 
-const dbschema = JSON.parse(fs.readFileSync(`${dirServer}/diagram-db-react/src/data/db-schema.json`))
+// const dbschema = JSON.parse(fs.readFileSync(`${dirServer}/diagram-db-react/src/data/db-schema.json`))
 
-dbschema.forEach((el, index) => {
+allData.forEach((el, index) => {
     const tableTitle = el.tableLongReference
     let acc = []
     el.items.forEach(f => {
