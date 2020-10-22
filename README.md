@@ -1,5 +1,7 @@
 This project was created to build an interactive graph displaying Liferay's database relationships on  schema modules.
 
+DEMO -> [Here](https://garofalog.github.io/liferay-schema-generator)
+
 ### Requirements
 * Node >= 10.x
 * Yarn >= 0.10.x
